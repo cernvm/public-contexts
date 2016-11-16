@@ -1,9 +1,17 @@
 #!/bin/sh.after
-# Pre-mount repositories
-for repo in lhcb lhcbdev grid sft; do
- ls /cvmfs/${repo}.cern.ch >/dev/null
-done
-exit
+parents=$(pid=$$; while [ $pid -ne 1 ]; do pid=$(ps -o ppid= -p $pid); cat /proc/$(echo $pid)/cmdline; done)
+if ! echo $parents | grep -q amiconfig; then
+  echo "Skipping startup script, which should only run under amiconfig daemon"
+  exit 0
+fi
+
+echo 'if [ "$PS1" ]; then
+  if [ "x$CERNVM_LHCB_ENV" = "x" ]; then
+    . /cvmfs/lhcb.cern.ch/etc/login.sh || true
+    export CERNVM_LHCB_ENV=1
+  fi
+fi' >> /home/lhcb/.bashrc
+exit 0
 
 [amiconfig]
 plugins=cernvm
@@ -13,7 +21,7 @@ organisations=LHCB
 repositories=lhcb,lhcbdev,grid,sft
 shell=/bin/bash
 config_url=http://cernvm.cern.ch/config
-users=lhcb:lhcb:boson
+users=lhcb:lhcb:lhcb
 edition=Desktop
 screenRes=1280x700
 keyboard=us
