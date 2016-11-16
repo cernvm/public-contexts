@@ -1,0 +1,37 @@
+#!/bin/sh.after
+parents=$(pid=$$; while [ $pid -ne 1 ]; do pid=$(ps -o ppid= -p $pid); cat /proc/$(echo $pid)/cmdline; done)
+if ! echo $parents | grep -q amiconfig; then
+  echo "Skipping startup script, which should only run under amiconfig daemon"
+  exit 0
+fi
+
+. /etc/cernvm/site.conf
+echo "alias setupATLAS='source \${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh'" > /etc/profile.d/asetup.sh
+
+# Pre-mount repositories
+for repo in atlas atlas-nightlies atlas-condb grid sft; do
+ ls /cvmfs/${repo}.cern.ch >/dev/null
+done
+exit
+
+[amiconfig]
+plugins=cernvm
+
+[cernvm]
+organisations=ATLAS
+repositories=atlas,atlas-condb,atlas-nightlies,grid,sft
+shell=/bin/bash
+config_url=http://cernvm.cern.ch/config
+users=atlas:atlas:boson
+environment=ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
+edition=Desktop
+screenRes=1280x700
+keyboard=us
+startXDM=on
+auto_login=on
+
+[ucernvm-begin]
+cvmfs_branch=cernvm-sl7.cern.ch
+cvmfs_server=hepvm.cern.ch
+cvmfs_path=cvm4
+[ucernvm-end]

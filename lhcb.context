@@ -1,0 +1,27 @@
+#!/bin/sh.after
+# Pre-mount repositories
+for repo in lhcb lhcbdev grid sft; do
+ ls /cvmfs/${repo}.cern.ch >/dev/null
+done
+exit
+
+[amiconfig]
+plugins=cernvm
+
+[cernvm]
+organisations=LHCB
+repositories=lhcb,lhcbdev,grid,sft
+shell=/bin/bash
+config_url=http://cernvm.cern.ch/config
+users=lhcb:lhcb:boson
+edition=Desktop
+screenRes=1280x700
+keyboard=us
+startXDM=on
+auto_login=on
+
+[ucernvm-begin]
+cvmfs_branch=cernvm-sl7.cern.ch
+cvmfs_server=hepvm.cern.ch
+cvmfs_path=cvm4
+[ucernvm-end]

@@ -1,0 +1,24 @@
+#!/bin/sh
+ls /cvmfs/sft.cern.ch >/dev/null 2>&1
+exit 0
+
+[amiconfig]
+plugins=cernvm
+
+[cernvm]
+auto_login=on
+organisations=
+repositories=sft
+shell=/bin/bash
+config_url=http://cernvm.cern.ch/config
+users=user:user:password
+edition=Desktop
+screenRes=1280x800
+keyboard=us-acentos
+startXDM=on
+
+[ucernvm-begin]
+cvmfs_branch=cernvm-sl7.cern.ch
+cvmfs_server=hepvm.cern.ch
+cvmfs_path=cvm4
+[ucernvm-end]
