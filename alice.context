@@ -5,21 +5,24 @@ if ! echo $parents | grep -q amiconfig; then
   exit 0
 fi
 
-. /etc/cernvm/site.conf
-echo "alias setupATLAS='source \${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh'" > /etc/profile.d/asetup.sh
-ls /cvmfs/atlas.cern.ch >/dev/null
+ls /cvmfs/alice.cern.ch >/dev/null
+echo 'if [ "$PS1" ]; then
+  if [ "x$CERNVM_ALICE_ENV" = "x" ]; then
+    . /cvmfs/alice.cern.ch/etc/login.sh || true
+    export CERNVM_ALICE_ENV=1
+  fi
+fi' >> /home/alice/.bashrc
 exit 0
 
 [amiconfig]
 plugins=cernvm
 
 [cernvm]
-organisations=ATLAS
-repositories=atlas,atlas-condb,atlas-nightlies,grid,sft
+organisations=ALICE
+repositories=alice,alice-ocdb,grid,sft
 shell=/bin/bash
 config_url=http://cernvm.cern.ch/config
-users=atlas:atlas:atlas
-environment=ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
+users=alice:alice:alice
 edition=Desktop
 screenRes=1280x700
 keyboard=us

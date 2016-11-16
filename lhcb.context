@@ -5,6 +5,7 @@ if ! echo $parents | grep -q amiconfig; then
   exit 0
 fi
 
+ls /cvmfs/lhcb.cern.ch >/dev/null
 echo 'if [ "$PS1" ]; then
   if [ "x$CERNVM_LHCB_ENV" = "x" ]; then
     . /cvmfs/lhcb.cern.ch/etc/login.sh || true
