@@ -1,0 +1,12 @@
+[amiconfig]
+plugins=squid
+ 
+[squid]
+backends = cvmfs-stratum-one.cern.ch,cernvmfs.gridpp.rl.ac.uk,cvmfs.racf.bnl.govcvmfs.fnal.gov,cernvm-webfs.cern.ch,hepvm.cern.ch
+cache_dir_size = 1000
+
+[ucernvm-begin]
+cvmfs_branch=cernvm-sl7.cern.ch
+cvmfs_server=hepvm.cern.ch
+cvmfs_path=cvm4
+[ucernvm-end]
