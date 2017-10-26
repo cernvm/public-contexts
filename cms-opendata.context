@@ -19,6 +19,7 @@ EOF
 echo 'HISTFILE=~/.cms_history' >> \$TMPRC
 echo '. /cvmfs/cms.cern.ch/cmsset_default.sh' >> \$TMPRC
 cvmfs_config probe
+echo "Starting up CMS shell..."
 singularity exec -B /usr/share/X11/xkb/rules -B /etc/cvmfs -B /etc/cms -B /cvmfs -B /eos /cvmfs/cernvm-slc5.cern.ch/cvm3 /bin/bash --noprofile --rcfile \$TMPRC
 rm -f \$TMPRC
 EOFOUTER
