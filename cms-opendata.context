@@ -99,7 +99,7 @@ url="http://cmsfrontier3.cern.ch:8000/FrontierInt"/>
 exit 0
 
 [cernvm]
-repositories=cms.cern.ch,sft.cern.ch
+repositories=cms.cern.ch,cms-opendata-conddb.cern.ch,sft.cern.ch
 shell=/bin/bash
 config_url=http://cernvm.cern.ch/config
 users=cms-opendata:cms-opendata:password
