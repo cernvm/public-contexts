@@ -18,6 +18,7 @@ PS1='\[\e]2;CMS Shell\a\]\[\e[1;32m\]CMS Shell >\[\e[m\]\[\e[0;32m\] '
 EOF
 echo 'HISTFILE=~/.cms_history' >> \$TMPRC
 echo '. /cvmfs/cms.cern.ch/cmsset_default.sh' >> \$TMPRC
+cvmfs_config probe
 singularity exec -B /usr/share/X11/xkb/rules -B /etc/cvmfs -B /etc/cms -B /cvmfs -B /eos /cvmfs/cernvm-slc5.cern.ch/cvm3 /bin/bash --noprofile --rcfile \$TMPRC
 rm -f \$TMPRC
 EOFOUTER
