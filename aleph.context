@@ -1,0 +1,67 @@
+#!/bin/sh.before
+parents=$(pid=$$; while [ $pid -ne 1 ]; do pid=$(ps -o ppid= -p $pid); cat /proc/$(echo $pid)/cmdline; done)
+if ! echo $parents | grep -q amiconfig; then
+  echo "Skipping startup script, which should only run under amiconfig daemon"
+  exit 0
+fi
+
+# EOS directories
+mkdir -p /eos
+chown -R ganis:sf /eos
+
+# Script to mount EOS
+cat << EOFOUTER > /usr/bin/mount-eos
+#!/bin/sh
+
+# EOS server
+export EOS_MGM_URL=root://eospublic.cern.ch
+if test ! "x$1" = "x" ; then
+   export EOS_MGM_URL=$1
+fi
+
+# mount
+eos fuse mount /eos
+
+EOFOUTER
+chmod 0755 /usr/bin/mount-eos
+
+cat << EOFOUTER > /usr/bin/aleph-shell
+#!/bin/sh
+TMPRC=\$(mktemp)
+cat > \$TMPRC << EOF
+PS1='\[\e]2;aleph shell\a\]\[\e[1;32m\]aleph shell >\[\e[m\]\[\e[0;32m\] '
+EOF
+echo 'HISTFILE=~/.aleph_history' >> \$TMPRC
+# echo '. /cvmfs/cms.cern.ch/cmsset_default.sh' >> \$TMPRC
+cvmfs_config probe
+echo "Starting up ALEPH shell..."
+singularity exec -B /usr/share/X11/xkb/rules -B /etc/cvmfs -B /cvmfs -B /eos /cvmfs/cernvm-slc4.cern.ch/cvm3 /bin/bash --noprofile --rcfile \$TMPRC
+rm -f \$TMPRC
+EOFOUTER
+chmod 0755 /usr/bin/aleph-shell
+
+# Avoid xroot client warnings
+touch /etc/profile.d/xrootd-protocol.sh
+echo '
+export XrdSecPROTOCOL=unix
+' > /etc/profile.d/xrootd-protocol.sh
+
+exit 0
+
+[cernvm]
+repositories=sft.cern.ch,aleph.cern.ch
+shell=/bin/bash
+config_url=http://cernvm.cern.ch/config
+eos-server=root://eospublic.cern.ch
+users=ganis:sf:$6$WIjSh7.v$jgTz4226ZKro4B1TmeMjWr09LYgKG0qzNIp.iWFAdoJVb4Vgsierq/q0q.fAUbCOB.r1U10SKrMy6EBqZ6aCj/
+edition=Desktop
+screenRes=1280x700
+keyboard=us
+startXDM=on
+auto_login=on
+# desktop_icons=CMS~OpenData,W0Rlc2t0b3AgRW50cnldClZlcnNpb249MS4wCkVuY29kaW5nPVVURi04ClR5cGU9TGluawpOYW1lPVJlYWQgTWUKQ29tbWVudD0KSWNvbj0vdXNyL3NoYXJlL2ljb25zL2Ntcy5qcGcKVVJMPWh0dHA6Ly9vcGVuZGF0YS5jZXJuLmNoL1ZNL0NNUwpHZW5lcmljTmFtZT0K%CMS~Shell,W0Rlc2t0b3AgRW50cnldClZlcnNpb249MS4wClR5cGU9QXBwbGljYXRpb24KTmFtZT1DTVMgU2hlbGwKQ29tbWVudD0KRXhlYz0vdXNyL2Jpbi9jbXMtc2hlbGwKSWNvbj11dGlsaXRpZXMtdGVybWluYWwKUGF0aD0KVGVybWluYWw9dHJ1ZQpTdGFydHVwTm90aWZ5PWZhbHNlCg==
+
+[ucernvm-begin]
+cvmfs_branch=cernvm-sl7.cern.ch
+cvmfs_server=hepvm.cern.ch
+[ucernvm-end]
