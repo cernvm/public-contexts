@@ -20,7 +20,16 @@ echo 'HISTFILE=~/.cms_history' >> \$TMPRC
 echo '. /cvmfs/cms.cern.ch/cmsset_default.sh' >> \$TMPRC
 cvmfs_config probe
 echo "Starting up CMS shell..."
-singularity exec -B /usr/share/X11/xkb/rules -B /etc/cvmfs -B /etc/cms -B /cvmfs -B /eos /cvmfs/cernvm-slc5.cern.ch/cvm3 /bin/bash --noprofile --rcfile \$TMPRC
+TZ_SRC=$(readlink /etc/localtime)
+TZ_DST=$(readlink /cvmfs/cernvm-slc5.cern.ch/cvm3/etc/localtime)
+singularity exec \
+  -B $TZ_SRC:$TZ_DST \
+  -B /usr/share/X11/xkb/rules \
+  -B /etc/cvmfs \
+  -B /etc/cms \
+  -B /cvmfs \
+  -B /eos \
+  /cvmfs/cernvm-slc5.cern.ch/cvm3 /bin/bash --noprofile --rcfile \$TMPRC
 rm -f \$TMPRC
 EOFOUTER
 chmod 0755 /usr/bin/cms-shell
@@ -111,4 +120,3 @@ keyboard=us
 startXDM=on
 auto_login=on
 desktop_icons=CMS~OpenData,W0Rlc2t0b3AgRW50cnldClZlcnNpb249MS4wCkVuY29kaW5nPVVURi04ClR5cGU9TGluawpOYW1lPVJlYWQgTWUKQ29tbWVudD0KSWNvbj0vdXNyL3NoYXJlL2ljb25zL2Ntcy5qcGcKVVJMPWh0dHA6Ly9vcGVuZGF0YS5jZXJuLmNoL1ZNL0NNUwpHZW5lcmljTmFtZT0K%CMS~Shell,W0Rlc2t0b3AgRW50cnldClZlcnNpb249MS4wClR5cGU9QXBwbGljYXRpb24KTmFtZT1DTVMgU2hlbGwKQ29tbWVudD0KRXhlYz0vdXNyL2Jpbi9jbXMtc2hlbGwKSWNvbj11dGlsaXRpZXMtdGVybWluYWwKUGF0aD0KVGVybWluYWw9dHJ1ZQpTdGFydHVwTm90aWZ5PWZhbHNlCg==
-
