@@ -5,6 +5,9 @@ if ! echo $parents | grep -q amiconfig; then
   exit 0
 fi
 
+# Set CVMFS cache size to 10G
+echo "CVMFS_QUOTA_LIMIT=10000 # 10G cache" > /etc/cvmfs/default.local
+
 echo "export CMS_LOCAL_SITE=/etc/cms/SITECONF/T2_UK_London_IC" > /etc/cvmfs/config.d/cms.cern.ch.local
 echo "export SCRAM_ARCH=slc5_amd64_gcc434" > /etc/profile.d/cms.sh
 echo "source /cvmfs/cms.cern.ch/cmsset_default.sh" >> /etc/profile.d/cms.sh
