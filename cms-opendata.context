@@ -23,10 +23,10 @@ echo 'HISTFILE=~/.cms_history' >> \$TMPRC
 echo '. /cvmfs/cms.cern.ch/cmsset_default.sh' >> \$TMPRC
 cvmfs_config probe
 echo "Starting up CMS shell..."
-TZ_SRC=$(readlink /etc/localtime)
-TZ_DST=$(readlink /cvmfs/cernvm-slc5.cern.ch/cvm3/etc/localtime)
+TZ_SRC=\$(readlink /etc/localtime)
+TZ_DST=\$(readlink /cvmfs/cernvm-slc5.cern.ch/cvm3/etc/localtime)
 singularity exec \
-  -B $TZ_SRC:$TZ_DST \
+  -B \$TZ_SRC:\$TZ_DST \
   -B /usr/share/X11/xkb/rules \
   -B /etc/cvmfs \
   -B /etc/cms \
