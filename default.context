@@ -1,0 +1,20 @@
+#!/bin/sh
+ls /cvmfs/sft.cern.ch \
+   /cvmfs/grid.cern.ch >/dev/null 2>&1
+exit 0
+
+[amiconfig]
+plugins=cernvm
+
+[cernvm]
+auto_login=on
+organisations=
+repositories=sft,grid
+shell=/bin/bash
+config_url=http://cernvm.cern.ch/config
+users=user:user:password
+edition=Desktop
+screenRes=1280x800
+keyboard=us-acentos
+startXDM=on
+
