@@ -11,6 +11,7 @@ echo "CVMFS_QUOTA_LIMIT=20000 # 20G cache" > /etc/cvmfs/default.local
 echo "export CMS_LOCAL_SITE=/etc/cms/SITECONF/T2_UK_London_IC" > /etc/cvmfs/config.d/cms.cern.ch.local
 echo "export SCRAM_ARCH=slc6_amd64_gcc472" > /etc/profile.d/cms.sh
 echo "source /cvmfs/cms.cern.ch/cmsset_default.sh" >> /etc/profile.d/cms.sh
+echo 'PS1="[Outer Shell \W] "' >> /etc/profile.d/cms.sh
 chmod 0755 /etc/profile.d/cms.sh
 
 cat << EOFOUTER > /usr/bin/cms-shell
@@ -28,6 +29,7 @@ TZ_DST=\$(readlink /cvmfs/cernvm-prod.cern.ch/cvm3/etc/localtime)
 singularity exec \
   -B \$TZ_SRC:\$TZ_DST \
   -B /usr/share/X11/xkb/rules \
+  -B /etc/mtab \
   -B /etc/cvmfs \
   -B /etc/cms \
   -B /cvmfs \
