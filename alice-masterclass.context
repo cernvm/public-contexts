@@ -28,4 +28,5 @@ screenRes=1280x700
 keyboard=us
 startXDM=on
 auto_login=on
+services=eosd
 
