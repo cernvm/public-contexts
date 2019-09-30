@@ -1,0 +1,33 @@
+#!/bin/sh.after
+parents=$(pid=$$; while [ $pid -ne 1 ]; do pid=$(ps -o ppid= -p $pid); cat /proc/$(echo $pid)/cmdline; done)
+if ! echo $parents | grep -q amiconfig; then
+  echo "Skipping startup script, which should only run under amiconfig daemon"
+  exit 0
+fi
+
+ls /cvmfs/fcc.cern.ch >/dev/null
+echo 'if [ "$PS1" ]; then
+  if [ "x$CERNVM_FCC_ENV" = "x" ]; then
+    . /cvmfs/fcc.cern.ch/sw/views/releases/externals/96b.0.0/x86_64-centos7-gcc8-opt/setup.sh || true
+    . /cvmfs/fcc.cern.ch/sw/releases/fccsw/0.11/x86_64-centos7-gcc8-opt/setup.sh || true
+    export CERNVM_FCC_ENV=1
+  fi
+fi' >> /home/fccuser/.bashrc
+exit 0
+
+[amiconfig]
+plugins=cernvm
+
+[cernvm]
+organisations=FCC
+repositories=fcc,grid,sft
+shell=/bin/bash
+config_url=http://cernvm.cern.ch/config
+users=fccuser:fccuser:fccpass
+edition=Desktop
+screenRes=1280x700
+keyboard=us
+startXDM=on
+auto_login=on
+services=eosd,sshd
+
