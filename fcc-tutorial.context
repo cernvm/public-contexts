@@ -8,8 +8,7 @@ fi
 ls /cvmfs/fcc.cern.ch >/dev/null
 echo 'if [ "$PS1" ]; then
   if [ "x$CERNVM_FCC_ENV" = "x" ]; then
-    . /cvmfs/fcc.cern.ch/sw/views/releases/externals/96b.0.0/x86_64-centos7-gcc8-opt/setup.sh || true
-    . /cvmfs/fcc.cern.ch/sw/releases/fccsw/0.11/x86_64-centos7-gcc8-opt/setup.sh || true
+    . /cvmfs/fcc.cern.ch/sw/latest/setup.sh || true
     export CERNVM_FCC_ENV=1
   fi
 fi' >> /home/fccuser/.bashrc
@@ -30,4 +29,3 @@ keyboard=us
 startXDM=on
 auto_login=on
 services=eosd,sshd
-
