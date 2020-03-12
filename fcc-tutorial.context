@@ -5,45 +5,29 @@ if ! echo $parents | grep -q amiconfig; then
   exit 0
 fi
 
+__userhome=/home/fccuser
+
+echo 'us=$1
+if [ "x$us" = "x" ]; then
+  us=$USER
+fi
+kinit $us@CERN.CH
+eosfusebind' > /usr/bin/eosinit
+chmod a+x /usr/bin/eosinit
+
 ls /cvmfs/fcc.cern.ch >/dev/null
 echo 'if [ "$PS1" ]; then
   if [ "x$CERNVM_FCC_ENV" = "x" ]; then
     . /cvmfs/fcc.cern.ch/sw/latest/setup.sh || true
     export CERNVM_FCC_ENV=1
   fi
-fi' > /home/fccuser/setup-fccsw.sh
-chmod a+x /home/fccuser/setup-fccsw.sh
+fi' > $__userhome/setup-fccsw.sh
+chmod a+x $__userhome/setup-fccsw.sh
 
-# Whizard special setup. Shoudl be run in a fresh shell.
-mkdir -p /home/fccuser/whizard
-
-echo '
-LCGVER="LCG_96b"
-LCIOVER="02.12.01"
-source /cvmfs/sft.cern.ch/lcg/contrib/gcc/8.3.0/x86_64-centos7-gcc8-opt/setup.sh
-export PATH=/cvmfs/sft.cern.ch/lcg/releases/${LCGVER}/MCGenerators/whizard/2.8.1/x86_64-centos7-gcc8-opt/bin/:${PATH}
-export LD_LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/${LCGVER}/MCGenerators/whizard/2.8.1/x86_64-centos7-gcc8-opt/lib/:${LD_LIBRARY_PATH}
-export LD_LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/${LCGVER}/LCIO/${LCIOVER}/x86_64-centos7-gcc8-opt/lib/:${LD_LIBRARY_PATH}
-export LD_LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/${LCGVER}/MCGenerators/lhapdf/6.2.3/x86_64-centos7-gcc8-opt/lib/:${LD_LIBRARY_PATH}
-export LD_LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/${LCGVER}/HepMC/2.06.10/x86_64-centos7-gcc8-opt/lib/:${LD_LIBRARY_PATH}
-export LD_LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/${LCGVER}/fastjet/3.3.2/x86_64-centos7-gcc8-opt/lib/:${LD_LIBRARY_PATH}
-' > /home/fccuser/whizard/setup-whizard.sh
-chmod a+x /home/fccuser/whizard/setup-whizard.sh
-
-echo '
-if test ! -d models ; then
-  ln -sf  /cvmfs/sft.cern.ch/lcg/releases/LCG_96b/MCGenerators/whizard/2.8.1/x86_64-centos7-gcc8-opt/share/whizard/models
-else
-  echo "'models' links exist"
-fi
-
-if test ! -d examples; then
-  ln -sf  /cvmfs/sft.cern.ch/lcg/releases/LCG_96b/MCGenerators/whizard/2.8.1/x86_64-centos7-gcc8-opt/share/whizard/examples
-else
-  echo "'examples' links exist"
-fi
-' > /home/fccuser/whizard/setup-whizard-links.sh
-chmod a+x /home/fccuser/whizard/setup-whizard-links.sh
+# Whizard special setup. Should be run in a fresh shell.
+mkdir -p $__userhome/whizard
+echo '. /eos/project/f/fccsw-web/www/share/gen/whizard/setup-whizard.sh' > $__userhome/whizard/setup.sh
+chmod a+x $__userhome/whizard/setup.sh
 
 echo '
 
@@ -51,24 +35,18 @@ echo '
      $ env -i bash
   
   and execute
-     $ source ~/whizard/setup-whizard.sh
-  
-  create symlinks inside each working directory
-     $ source ~/whizard/setup-whizard-links.sh
-  
-   ' >> /home/fccuser/whizard/README
+     $ source ~/whizard/setup.sh
+
+   ' >> $__userhome/whizard/README
 
 echo '  echo " "
   echo "  To enable EOS access please do"
-  echo "     $ kinit <your-cern-username>"
-  echo " "
-  echo "  followed by"
-  echo "     $ eosfusebind"
+  echo "     $ eosinit <your-cern-username>"
   echo " "
   echo "  To enable FCCSW execute"
   echo "     $ source setup-fccsw.sh"
-  cat /home/fccuser/whizard/README
-  echo " " ' >> /home/fccuser/.bashrc
+  cat ~/whizard/README
+  echo " " ' >> $__userhome/.bashrc
 exit 0
 
 [amiconfig]
@@ -88,6 +66,6 @@ auto_login=on
 services=eosd,sshd
 
 [ucernvm-begin]
-cvmfs_branch=cernvm-testing.cern.ch
+cvmfs_branch=cernvm-sl7.cern.ch
 cvmfs_server=hepvm.cern.ch
 [ucernvm-end]
