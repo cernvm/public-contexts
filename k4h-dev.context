@@ -15,38 +15,10 @@ kinit $us@CERN.CH
 eosfusebind' > /usr/bin/eosinit
 chmod a+x /usr/bin/eosinit
 
-ls /cvmfs/fcc.cern.ch >/dev/null
-echo 'if [ "$PS1" ]; then
-  if [ "x$CERNVM_FCC_ENV" = "x" ]; then
-    . /cvmfs/fcc.cern.ch/sw/latest/setup.sh || true
-    export CERNVM_FCC_ENV=1
-  fi
-fi' > $__userhome/setup-fccsw.sh
-chmod a+x $__userhome/setup-fccsw.sh
-
-# Whizard special setup. Should be run in a fresh shell.
-mkdir -p $__userhome/whizard
-echo '. /eos/project/f/fccsw-web/www/share/gen/whizard/setup-whizard.sh' > $__userhome/whizard/setup.sh
-chmod a+x $__userhome/whizard/setup.sh
-
-echo '
-
-  To configure whizard start a new shell
-     $ env -i bash
-  
-  and execute
-     $ source ~/whizard/setup.sh
-
-   ' >> $__userhome/whizard/README
-
 echo '  echo " "
   echo "  To enable EOS access please do"
   echo "     $ eosinit <your-cern-username>"
   echo " "
-  echo "  To enable FCCSW execute"
-  echo "     $ source setup-fccsw.sh"
-  cat ~/whizard/README
-  echo " " ' >> $__userhome/.bashrc
 exit 0
 
 [amiconfig]
@@ -54,7 +26,7 @@ plugins=cernvm
 
 [cernvm]
 organisations=key4hep
-repositories=fcc,grid,sft,sw.hsf.org,sw-nightlies.hsf.org
+repositories=clicdp,fcc,grid,sft,sw.hsf.org,sw-nightlies.hsf.org
 shell=/bin/bash
 config_url=http://cernvm.cern.ch/config
 users=k4huser:k4huser:pass
