@@ -18,8 +18,15 @@ chmod a+x /usr/bin/eosinit
 ls /cvmfs/sft.cern.ch >/dev/null
 echo 'if [ "$PS1" ]; then
   if [ "x$CERNVM_SFT_ENV" = "x" ]; then
+    if [ ! -e .cachedcvmfs ]; then
+      echo "*** First time a terminal is created. The CVMFS cache will need to be populated."
+      echo "*** If network bandwidth is limited, this may take several minutes. Please be patient."
+    fi
+    export LANG=en_US.UTF-8
+    export LC_ALL=en_US.UTF-8
     source /cvmfs/sft.cern.ch/lcg/views/LCG_97/x86_64-centos7-gcc8-opt/setup.sh || true
     export CERNVM_SFT_ENV=1
+    touch .cachedcvmfs
   fi
 fi' >> $__userhome/.bashrc
 exit 0
