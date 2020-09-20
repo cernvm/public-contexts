@@ -5,39 +5,36 @@ if ! echo $parents | grep -q amiconfig; then
   exit 0
 fi
 
-__userhome=/home/fccuser
+# Change to your convenience
+__user=fccuser
+__userhome=/home/$__user
 
 echo 'us=$1
 if [ "x$us" = "x" ]; then
   us=$USER
 fi
 kinit $us@CERN.CH
-eosfusebind' > /usr/bin/eosinit
+' > /usr/bin/eosinit
 chmod a+x /usr/bin/eosinit
 
 ls /cvmfs/fcc.cern.ch >/dev/null
 echo 'if [ "$PS1" ]; then
   if [ "x$CERNVM_FCC_ENV" = "x" ]; then
-    . /cvmfs/fcc.cern.ch/sw/latest/setup.sh || true
+    if [ "x$1" = "xlcg" ]; then
+      . /cvmfs/fcc.cern.ch/sw/latest/setup-lcg.sh -v 97a_FCC_3_rc1 || true
+    elif [ "x$1" = "xlegacy" ]; then
+      . /cvmfs/fcc.cern.ch/sw/latest/setup-legacy.sh || true
+    else
+      . /cvmfs/fcc.cern.ch/sw/latest/setup.sh || true
+    fi
     export CERNVM_FCC_ENV=1
   fi
 fi' > $__userhome/setup-fccsw.sh
 chmod a+x $__userhome/setup-fccsw.sh
 
-# Whizard special setup. Should be run in a fresh shell.
-mkdir -p $__userhome/whizard
-echo '. /eos/project/f/fccsw-web/www/share/gen/whizard/setup-whizard.sh' > $__userhome/whizard/setup.sh
-chmod a+x $__userhome/whizard/setup.sh
-
-echo '
-
-  To configure whizard start a new shell
-     $ env -i bash
-  
-  and execute
-     $ source ~/whizard/setup.sh
-
-   ' >> $__userhome/whizard/README
+# Shared folder at $HOME/host
+__folder=`ls -1 /mnt/shared`
+ln -sf /mnt/shared/$__folder $__userhome/host
 
 echo '  echo " "
   echo "  To enable EOS access please do"
@@ -45,7 +42,6 @@ echo '  echo " "
   echo " "
   echo "  To enable FCCSW execute"
   echo "     $ source setup-fccsw.sh"
-  cat ~/whizard/README
   echo " " ' >> $__userhome/.bashrc
 exit 0
 
@@ -57,7 +53,7 @@ organisations=FCC
 repositories=fcc,grid,sft
 shell=/bin/bash
 config_url=http://cernvm.cern.ch/config
-users=fccuser:fccuser:fccpass
+users=fccuser:fccuser:xpass
 edition=Desktop
 screenRes=1280x700
 keyboard=us
