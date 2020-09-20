@@ -5,7 +5,7 @@ if ! echo $parents | grep -q amiconfig; then
   exit 0
 fi
 
-# Change to your convenience
+# Change to your convenience, but do it also in the section [cernvm] below (where you can also set the password)
 __user=fccuser
 __userhome=/home/$__user
 
