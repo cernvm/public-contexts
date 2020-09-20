@@ -5,7 +5,8 @@ if ! echo $parents | grep -q amiconfig; then
   exit 0
 fi
 
-# Change to your convenience, but do it also in the section [cernvm] below (where you can also set the password)
+# Change to your convenience. If you do it, you need also to change the username
+# in the section [cernvm] below (where you can also set the password)
 __user=fccuser
 __userhome=/home/$__user
 
@@ -41,7 +42,9 @@ echo '  echo " "
   echo "     $ eosinit <your-cern-username>"
   echo " "
   echo "  To enable FCCSW execute"
-  echo "     $ source setup-fccsw.sh"
+  echo "     $ source /cvmfs/fcc.cern.ch/sw/latest/setup.sh"
+  echo " "
+  echo "  The shared folder from the host is availale (read-write) under $__userhome/host"
   echo " " ' >> $__userhome/.bashrc
 exit 0
 
