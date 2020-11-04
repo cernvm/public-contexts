@@ -1,0 +1,23 @@
+#!/bin/sh.before
+parents=$(pid=$$; while [ $pid -ne 1 ]; do pid=$(ps -o ppid= -p $pid); cat /proc/$(echo $pid)/cmdline; done)
+if ! echo $parents | grep -q amiconfig; then
+  echo "Skipping startup script, which should only run under amiconfig daemon"
+  exit 0
+fi
+
+echo "export PATH=$PATH:/cvmfs/na48.cern.ch/util/scripts" > /etc/profile.d/na48.sh
+chmod 0755 /etc/profile.d/na48.sh
+
+exit 0
+
+[cernvm]
+repositories=na48.cern.ch
+shell=/bin/bash
+config_url=http://cernvm.cern.ch/config
+users=na48:na48:password
+edition=Desktop
+screenRes=1280x700
+keyboard=us
+startXDM=on
+auto_login=on
+desktop_icons=NA48~Shell,W0Rlc2t0b3AgRW50cnldClZlcnNpb249MS4wClR5cGU9QXBwbGljYXRpb24KTmFtZT1OQTQ4IFNoZWxsCkNvbW1lbnQ9CkV4ZWM9L2N2bWZzL25hNDguY2Vybi5jaC91dGlsL3NjcmlwdHMvbmE0OC1zaGVsbC5zaApJY29uPXV0aWxpdGllcy10ZXJtaW5hbApQYXRoPQpUZXJtaW5hbD10cnVlClN0YXJ0dXBOb3RpZnk9ZmFsc2UK
