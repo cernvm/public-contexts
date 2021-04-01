@@ -8,7 +8,7 @@ fi
 # Change to your convenience. If you do it, you need also to change the username
 # in the section [cernvm] below (where you can also set the password)
 __user=fccuser
-__userhome=/home/$__user
+__userhome=/home/${__user}
 
 echo 'us=$1
 if [ "x$us" = "x" ]; then
@@ -30,12 +30,12 @@ echo 'if [ "$PS1" ]; then
     fi
     export CERNVM_FCC_ENV=1
   fi
-fi' > $__userhome/setup-fccsw.sh
-chmod a+x $__userhome/setup-fccsw.sh
+fi' > ${__userhome}/setup-fccsw.sh
+chmod a+x ${__userhome}/setup-fccsw.sh
 
 # Shared folder at $HOME/host
 __folder=`ls -1 /mnt/shared`
-ln -sf /mnt/shared/$__folder $__userhome/host
+ln -sf /mnt/shared/${__folder} ${__userhome}/host
 
 echo '  echo " "
   echo "  To enable EOS access please do"
