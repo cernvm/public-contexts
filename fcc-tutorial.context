@@ -18,34 +18,79 @@ kinit $us@CERN.CH
 ' > /usr/bin/eosinit
 chmod a+x /usr/bin/eosinit
 
-ls /cvmfs/fcc.cern.ch >/dev/null
+ls /cvmfs/sw.hsf.org >/dev/null
+ls /cvmfs/sw-nightlies.hsf.org >/dev/null
 echo 'if [ "$PS1" ]; then
-  if [ "x$CERNVM_FCC_ENV" = "x" ]; then
-    if [ "x$1" = "xlcg" ]; then
-      . /cvmfs/fcc.cern.ch/sw/latest/setup-lcg.sh -v 97a_FCC_3_rc1 || true
-    elif [ "x$1" = "xlegacy" ]; then
-      . /cvmfs/fcc.cern.ch/sw/latest/setup-legacy.sh || true
+  if [ "x$CERNVM_HSF_ENV" = "x" ]; then
+    if [ "x$1" = "xdev" ]; then
+      . /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh || true
     else
-      . /cvmfs/fcc.cern.ch/sw/latest/setup.sh || true
+      . /cvmfs/sw.hsf.org/key4hep/setup.sh || true
     fi
-    export CERNVM_FCC_ENV=1
+    export CERNVM_HSF_ENV=1
   fi
 fi' > ${__userhome}/setup-fccsw.sh
 chmod a+x ${__userhome}/setup-fccsw.sh
 
-# Shared folder at $HOME/host
-__folder=`ls -1 /mnt/shared`
-ln -sf /mnt/shared/${__folder} ${__userhome}/host
+ls /cvmfs/clicdp.cern.ch >/dev/null
+echo 'if [ "$PS1" ]; then
+  if [ "x$CERNVM_DIRAC_ENV" = "x" ]; then
+    if test "x$1" == "xdev" || test "x$1" == "xpreview" ; then
+       echo "Setting the development/preview DIRAC environment ..."
+       source /cvmfs/clicdp.cern.ch/DIRACpreview/bashrc
+    else
+       echo "Setting the production DIRAC environment ..."
+       source /cvmfs/clicdp.cern.ch/DIRAC/bashrc
+    fi
+    # We need to set these VARs explicitly
+    export X509_CERT_DIR=/cvmfs/clicdp.cern.ch/DIRAC/etc/grid-security/certificates
+    export X509_VOMSES=/cvmfs/clicdp.cern.ch/DIRAC/etc/grid-security/vomses
+    export X509_VOMS_DIR=/cvmfs/clicdp.cern.ch/DIRAC/etc/grid-security/vomsdir
+    echo "Initializing the DIRAC/Grid proxy ..."
+    dirac-proxy-init -g fcc_user
+    if test "x$?" = "x0" ; then
+       echo "Done!"
+       export CERNVM_DIRAC_ENV=1
+       export XrdSecPROTOCOL=gsi
+       export EOS_MGM_URL=root://eospublic.cern.ch
+    else
+       echo "Some problem occured ..."
+    fi
+  fi
+fi' > ${__userhome}/setup-dirac.sh
+chmod a+x ${__userhome}/setup-dirac.sh
 
 echo '  echo " "
-  echo "  To enable EOS access please do"
-  echo "     $ eosinit <your-cern-username>"
-  echo " "
-  echo "  To enable FCCSW execute"
-  echo "     $ source /cvmfs/fcc.cern.ch/sw/latest/setup.sh"
-  echo " "
-  echo "  The shared folder from the host is availale (read-write) under $__userhome/host"
-  echo " " ' >> $__userhome/.bashrc
+   echo "HOME: $HOME"
+   # Shared folder at $HOME/host
+   __folder=`ls -1 /mnt/shared`
+   echo "found folder: ${__folder}"
+   ln -sf /mnt/shared/${__folder} $HOME/host
+   # Credential files for DIRAC
+   if test -d /mnt/shared/${__folder}/.globus ; then
+      echo $HOME
+      if test ! -d $HOME/.globus ; then
+         mkdir $HOME/.globus
+      fi
+      if test ! -d ${__userhome}/.globus/usercert.pem ; then
+         cp -rp /mnt/shared/${__folder}/.globus/usercert.pem $HOME/.globus/
+      fi
+      if test ! -d ${__userhome}/.globus/userkey.pem ; then
+         cp -rp /mnt/shared/${__folder}/.globus/userkey.pem $HOME/.globus/
+      fi
+   fi
+
+   echo "  To enable EOS access please do"
+   echo "     $ eosinit <your-cern-username>"
+   echo " "
+   echo "  To enable FCCSW execute"
+   echo "     $ source ~/setup-fccsw.sh"
+   echo " "
+   echo "  To enable DIRAC execute"
+   echo "     $ source ~/setup-dirac.sh"
+   echo " "
+   echo "  The shared folder from the host is availale (read-write) under $HOME/host"
+   echo " " ' >> $__userhome/.bashrc
 exit 0
 
 [amiconfig]
@@ -53,7 +98,7 @@ plugins=cernvm
 
 [cernvm]
 organisations=FCC
-repositories=fcc,grid,sft
+repositories=grid,sft,clicdp
 shell=/bin/bash
 config_url=http://cernvm.cern.ch/config
 users=fccuser:fccuser:xpass
