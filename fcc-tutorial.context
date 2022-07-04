@@ -68,15 +68,15 @@ echo '  echo " "
    ln -sf /mnt/shared/${__folder} $HOME/host
    # Credential files for DIRAC
    if test -d /mnt/shared/${__folder}/.globus ; then
-      echo $HOME
+      # echo $HOME
       if test ! -d $HOME/.globus ; then
          mkdir $HOME/.globus
       fi
       if test ! -d ${__userhome}/.globus/usercert.pem ; then
-         cp -rp /mnt/shared/${__folder}/.globus/usercert.pem $HOME/.globus/
+         cp -rpf /mnt/shared/${__folder}/.globus/usercert.pem $HOME/.globus/
       fi
       if test ! -d ${__userhome}/.globus/userkey.pem ; then
-         cp -rp /mnt/shared/${__folder}/.globus/userkey.pem $HOME/.globus/
+         cp -rpf /mnt/shared/${__folder}/.globus/userkey.pem $HOME/.globus/
       fi
    fi
 
